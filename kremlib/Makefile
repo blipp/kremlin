@@ -52,7 +52,7 @@ ROOTS = $(wildcard *.fst) $(wildcard *.fsti) \
 clean: clean-c
 	rm -rf *.checked *.source .depend
 
-SHELL=/bin/bash
+SHELL=/usr/bin/env bash
 
 clean-c:
 	rm -rf dist out extract-all */*.o
