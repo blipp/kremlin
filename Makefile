@@ -28,6 +28,10 @@ kremlib: minimal
 	$(MAKE) -C kremlib
 
 src/AutoConfig.ml:
+	# Already copy the misc directory because it's needed by the
+	# kremlib build targets (they run krml)
+	mkdir -p $(PREFIX)/share/kremlin/misc
+	cp -r misc/* $(PREFIX)/share/kremlin/misc
 	@if [ x"$(PREFIX)" != x ]; then \
 	  echo "let kremlib_dir = \"$(PREFIX)/lib/kremlin\";;" > $@; \
 	  echo "let runtime_dir = \"$(PREFIX)/lib/kremlin/runtime\";;" >> $@; \
