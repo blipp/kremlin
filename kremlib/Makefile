@@ -12,15 +12,22 @@ all: verify-all compile-all
 
 ifdef FSTAR_HOME
   # Assume there is a F* source tree
-  FSTAR_EXE=$(FSTAR_HOME)/bin/fstar.exe; \
-  if [ -d $(FSTAR_HOME)/ulib ]; then \
-    FSTAR_ULIB=$(FSTAR_HOME)/ulib; \
-  elif [ -q $(FSTAR_HOME)/lib/fstar ]; then \
-    FSTAR_ULIB=$(FSTAR_HOME)/lib/fstar; \
-  fi
+  FSTAR_EXE=$(FSTAR_HOME)/bin/fstar.exe
 else
   # Assume F* in the PATH
   FSTAR_EXE=fstar.exe
+endif
+
+# Testing if the F* is in the layout of the Git repository
+# or in the OPAM layout produced by F* make install.
+ifneq ($(wildcard $(FSTAR_HOME)/ulib),)
+  FSTAR_ULIB=$(FSTAR_HOME)/ulib
+else
+  ifneq ($(wildcard $(FSTAR_HOME)/lib/fstar),)
+    FSTAR_ULIB=$(FSTAR_HOME)/lib/fstar
+  else
+    FSTAR_ULIB="" # TODO Fail here already?
+  endif
 endif
 
 EXTRACT_DIR = .extract
@@ -36,8 +43,6 @@ FSTAR = $(FSTAR_EXE) $(FSTAR_OPTIONS) --cache_checked_modules \
   $(addprefix --include , $(INCLUDE_PATHS)) --cmi \
   --already_cached 'FStar -FStar.Kremlin.Endianness LowStar'
 
-# Note: not compatible with the OPAM layout until fstar can be queried for the
-# location of ulib.
 ROOTS = $(wildcard *.fst) $(wildcard *.fsti) \
   $(addprefix $(FSTAR_ULIB)/,FStar.UInt128.fst FStar.Date.fsti \
     FStar.HyperStack.IO.fst FStar.IO.fst FStar.Int.Cast.Full.fst \
