@@ -18,6 +18,14 @@ else
   FSTAR_EXE=fstar.exe
 endif
 
+if [ -d $(FSTAR_HOME)/ulib ]; then \
+  FSTAR_ULIB=$(FSTAR_HOME)/ulib; \
+elif [ -q $(FSTAR_HOME)/lib/fstar ]; then \
+  FSTAR_ULIB=$(FSTAR_HOME)/lib/fstar; \
+else \
+  @echo "FStar library directory not found"; \
+fi
+
 EXTRACT_DIR = .extract
 
 GENERIC_DIR = dist/generic
@@ -34,7 +42,7 @@ FSTAR = $(FSTAR_EXE) $(FSTAR_OPTIONS) --cache_checked_modules \
 # Note: not compatible with the OPAM layout until fstar can be queried for the
 # location of ulib.
 ROOTS = $(wildcard *.fst) $(wildcard *.fsti) \
-  $(addprefix $(FSTAR_HOME)/ulib/,FStar.UInt128.fst FStar.Date.fsti \
+  $(addprefix $(FSTAR_ULIB)/,FStar.UInt128.fst FStar.Date.fsti \
     FStar.HyperStack.IO.fst FStar.IO.fst FStar.Int.Cast.Full.fst \
     FStar.Bytes.fsti FStar.Dyn.fsti)
 
